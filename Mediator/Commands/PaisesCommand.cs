@@ -6,7 +6,6 @@ using SmartBusinessAPI.Interfaces;
 using SmartBusinessAPI.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SmartBusinessAPI.Mediator.Commands

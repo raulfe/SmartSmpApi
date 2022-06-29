@@ -52,6 +52,7 @@ namespace SmartBusinessAPI.Controllers
                 {
                     Status = 200,
                     Company = "SmartBusinessCorp",
+                    Type = "Public",
                     Token = token
                 };
                 return Ok(response);

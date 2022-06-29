@@ -1,4 +1,5 @@
-﻿using SmartBusinessAPI.Entities.DTOs;
+﻿using SmartBusinessAPI.Entities;
+using SmartBusinessAPI.Entities.DTOs;
 using SmartBusinessAPI.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,5 +20,10 @@ namespace SmartBusinessAPI.Interfaces
         Task<IEnumerable<ProductoPais>> getPaisByPlan(int id);
         Task<Paquetes> getSmartPackById(int id);
         Task<IEnumerable<AdicionalesR>> getAdicionales(int id);
+        Task<int> updatePlanInicial(Productos prod);
+        Task<int> deleteProductoPaises(int id);
+        Task<int> updateSmartPack(Paquetes smartpack);
+        Task<int> deletePaquetesProductos(int id);
+        Task<int> updateStatusProducto(StatusProducto prod);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SmartBusinessAPI.Entities.DTOs;
 using SmartBusinessAPI.Exceptions;
 using SmartBusinessAPI.Interfaces;
 using SmartBusinessAPI.Models;
@@ -227,6 +228,17 @@ namespace SmartBusinessAPI.Repositories
                 return true;
             }
             
+        }
+
+        public async Task<Validacion> getVerified(int id)
+        {
+            var data = await _prospecto.getVerified(id);
+            if(data == null)
+            {
+                _logger.LogError("El usuario no existe");
+                throw new BusinessException("El usuario no existe");
+            }
+            return data;
         }
     }
 }

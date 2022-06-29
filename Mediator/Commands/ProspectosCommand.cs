@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Npgsql;
+using SmartBusinessAPI.Entities.DTOs;
 using SmartBusinessAPI.Interfaces;
 using SmartBusinessAPI.Models;
 using System;
@@ -30,11 +31,13 @@ namespace SmartBusinessAPI.Mediator.Commands
 
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                _logger.LogError($"Exception : {e.Message}");
                 return null;
             }
+
+
             
 
         }
@@ -58,6 +61,25 @@ namespace SmartBusinessAPI.Mediator.Commands
             }
             
 
+        }
+
+        public async Task<Validacion> getVerified(int id)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "SELECT * FROM public.prospecto_validacion WHERE prospecto = @pr ORDER BY fecha_insert LIMIT 1";
+                    var data = await connection.QueryFirstAsync<Validacion>(script, new { pr = id });
+                    return data;
+
+                }
+            }
+            catch (Exception e)
+            {
+
+                return null;
+            }
         }
 
         public async Task<ProspectoInfo> getInfoById(int id)

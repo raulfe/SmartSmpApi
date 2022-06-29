@@ -72,8 +72,14 @@ namespace SmartBusinessAPI.Controllers
             
         }
 
-        
-
+        [HttpGet("Verified/{id}")]
+        public async Task<IActionResult> getVerified(int id)
+        {
+            var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            _logger.LogInformation($"Request by {address} IP");
+            var data = await _repository.getVerified(id);
+            return Ok(data);
+        }
         
     }
 }

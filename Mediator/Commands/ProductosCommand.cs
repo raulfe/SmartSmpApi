@@ -2,6 +2,7 @@ using Dapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Npgsql;
+using SmartBusinessAPI.Entities;
 using SmartBusinessAPI.Entities.DTOs;
 using SmartBusinessAPI.Interfaces;
 using SmartBusinessAPI.Models;
@@ -112,6 +113,48 @@ namespace SmartBusinessAPI.Mediator.Commands
             }
         }
 
+        public async Task<int> updatePlanInicial(Productos prod)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "UPDATE public.productos  SET tipo = @tipo,codigo = @codigo,nombre = @nombre,monto = @monto,moneda = @moneda,es_monto_abierto = @es_monto_abierto,pago_btc = @pago_btc,pago_tdc = @pago_tdc,rendimiento = @rendimiento,regla_capitalizacion = @regla_capitalizacion,comision = @comision,duracion = @duracion,es_borrador = @es_borrador,fecha_ini = @fecha_ini,fecha_fin = @fecha_fin,fecha_update = @fecha_update WHERE producto = @producto";
+                    var data = await connection.ExecuteAsync(script,
+                        new
+                        {
+                            producto = prod.Producto,
+                            tipo = prod.Tipo,
+                            codigo = prod.Codigo,
+                            nombre = prod.Nombre,
+                            monto = prod.Monto,
+                            moneda = prod.Moneda,
+                            es_monto_abierto = prod.Es_monto_abierto,
+                            pago_btc = prod.Pago_btc,
+                            pago_tdc = prod.Pago_tdc,
+                            rendimiento = prod.Rendimiento,
+                            regla_capitalizacion = prod.Regla_capitalizacion,
+                            comision = prod.Comision,
+                            plazo_forzoso = prod.Plazo_Forzoso,
+                            plazo_comision = prod.Plazo_Comision,
+                            duracion = prod.Duracion,
+                            activo = prod.Activo,
+                            es_borrador = prod.Es_borrador,
+                            fecha_ini = prod.Fecha_Ini,
+                            fecha_fin = prod.Fecha_Fin,
+                            fecha_update = DateTime.Now
+                        });
+                    return data;
+
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Exception found: {e.Message}");
+                return 0;
+            }
+        }
+
         public async Task<int> insertNewPlan(ProductosDTO prod)
         {
             try
@@ -143,6 +186,29 @@ namespace SmartBusinessAPI.Mediator.Commands
                             fecha_fin = prod.Fecha_Fin,
                             fecha_insert = DateTime.Now,
                             fecha_update = DateTime.Now
+                        });
+                    return data;
+
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Exception found: {e.Message}");
+                return 0;
+            }
+        }
+
+        public async Task<int> deleteProductoPaises(int id)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "DELETE FROM public.producto_paises WHERE producto = @producto";
+                    var data = await connection.ExecuteAsync(script,
+                        new
+                        {
+                            producto = id
                         });
                     return data;
 
@@ -229,7 +295,7 @@ namespace SmartBusinessAPI.Mediator.Commands
             {
                 using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
                 {
-                    var script = "SELECT smart_pack FROM public.paquetes WHERE smart_pack = @smart_pack";
+                    var script = "SELECT * FROM public.paquetes WHERE smart_pack = @smart_pack";
                     var data = await connection.QueryFirstAsync<Paquetes>(script, new { smart_pack = id });
                     return data;
                 }
@@ -286,6 +352,84 @@ namespace SmartBusinessAPI.Mediator.Commands
                             fecha_fin = smartpack.Fecha_fin,
                             fecha_insert = DateTime.Now,
                             fecha_update = DateTime.Now
+                        });
+                    return data;
+
+                }
+            }
+            catch (Exception e)
+            {
+
+                _logger.LogError($"Exception found: {e.Message}");
+                return 0;
+            }
+        }
+
+        public async Task<int> updateSmartPack(Paquetes smartpack)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "UPDATE public.paquetes SET descripcion = @descripcion,rendimiento = @rendimiento,fecha_ini = @fecha_ini,fecha_fin = @fecha_fin,fecha_update = @fecha_update WHERE smart_pack = @smart_pack";
+                    var data = await connection.ExecuteAsync(script,
+                        new
+                        {
+                            smart_pack = smartpack.Smart_pack,
+                            descripcion = smartpack.Descripcion,
+                            rendimiento = smartpack.Rendimiento,
+                            fecha_ini = smartpack.Fecha_ini,
+                            fecha_fin = smartpack.Fecha_fin,
+                            fecha_update = DateTime.Now
+                        });
+                    return data;
+
+                }
+            }
+            catch (Exception e)
+            {
+
+                _logger.LogError($"Exception found: {e.Message}");
+                return 0;
+            }
+        }
+
+        public async Task<int> updateStatusProducto(StatusProducto prod)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "UPDATE public.productos SET activo = @activo WHERE producto = @producto";
+                    var data = await connection.ExecuteAsync(script,
+                        new
+                        {
+                            activo = prod.Status,
+                            producto = prod.Producto
+                        });
+                    return data;
+
+                }
+            }
+            catch (Exception e)
+            {
+
+                _logger.LogError($"Exception found: {e.Message}");
+                return 0;
+            }
+        }
+
+        public async Task<int> deletePaquetesProductos(int id)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "DELETE FROM public.paquete_productos WHERE smart_pack = @smart_pack";
+                    var data = await connection.ExecuteAsync(script,
+                        new
+                        {
+                            smart_pack = id
                         });
                     return data;
 
