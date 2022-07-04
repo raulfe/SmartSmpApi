@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SmartBusinessAPI.Entities;
 using SmartBusinessAPI.Entities.NuevosProducto;
@@ -20,7 +21,7 @@ namespace SmartBusinessAPI.Controllers
             _repository = repository;
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet("Planes/{tipo}")]
         public async Task<IActionResult> getPlan(int tipo)
         {
@@ -30,7 +31,7 @@ namespace SmartBusinessAPI.Controllers
             return Ok(data);
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet("Planes/General")]
         public async Task<IActionResult> getPlans()
         {
@@ -40,7 +41,7 @@ namespace SmartBusinessAPI.Controllers
             return Ok(data);
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet("Plan/{id}")]
         public async Task<IActionResult> getPlanById(int id)
         {
@@ -50,7 +51,7 @@ namespace SmartBusinessAPI.Controllers
             return Ok(data);
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> insertNewPlan(NewProduct prod)
         {
@@ -68,7 +69,7 @@ namespace SmartBusinessAPI.Controllers
 
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpPut("Status")]
         public async Task<IActionResult> updateStatus(StatusProducto prod)
         {
@@ -86,7 +87,7 @@ namespace SmartBusinessAPI.Controllers
 
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> updatePlan(UpdateProduct prod)
         {

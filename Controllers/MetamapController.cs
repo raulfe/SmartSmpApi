@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -72,6 +73,7 @@ namespace SmartBusinessAPI.Controllers
             
         }
 
+        [Authorize]
         [HttpGet("Verified/{id}")]
         public async Task<IActionResult> getVerified(int id)
         {
