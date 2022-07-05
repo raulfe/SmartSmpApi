@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SmartBusinessAPI.Entities;
+using SmartBusinessAPI.Entities.NuevaMembresia;
 using SmartBusinessAPI.Interfaces;
 using System.Threading.Tasks;
 
@@ -45,6 +46,28 @@ namespace SmartBusinessAPI.Controllers
                 Results = data
             };
             return Ok(response);
+
+        }
+
+        [Authorize]
+        [HttpPut]
+
+        public async Task<IActionResult> updateMembresia(updateMembership membreUpdate)
+        {
+            var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            _logger.LogInformation($"Request by {address} IP");
+            var data = await _repository.updateMembresia(membreUpdate);
+            var response = new
+            {
+                Status = 200,
+                Response = "Mebresia Actualizada",
+                Details = "Smart Business API",
+                Results = data
+            };
+            return Ok(response);
+
+
+
 
         }
     }

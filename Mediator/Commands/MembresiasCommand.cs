@@ -142,5 +142,67 @@ namespace SmartBusinessAPI.Mediator.Commands
             }
         }
 
+
+        public async Task<int> updateMembership(Membresias membership) 
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "UPDATE public.mebresias SET producto = @producto, tipo = @tipo, nombre = @nombre, precio = @precio, moneda = @moneda, vigencia = @vigencia, fecha_ini = @fecha_ini, fecha_fin = @fecha_fin, pago_btc = @pago_btc, pago_tdc = @pago_tdc, descripcion = @descripcion, activo = @activo, es_borrador = @es_borrador WHERE membresia = @membresia";
+                    var data = await connection.ExecuteAsync(script,
+                        new { 
+                            membresia = membership.Membresia,
+                            producto = membership.Producto,
+                            tipo = membership.Tipo,
+                            nombre = membership.Nombre,
+                            precio = membership.Precio,
+                            moneda = membership.Moneda,
+                            vigencia = membership.Vigencia,
+                            fecha_ini = membership.Fecha_ini,
+                            fecha_fin = membership.Fecha_fin,
+                            pago_btc = membership.Pago_btc,
+                            pago_tdc = membership.Pago_tdc,
+                            descripcion = membership.Descripcion,
+                            activo = membership.Activo,
+                            es_borrador = membership.Es_borrador
+
+                        });
+                    return data;
+                }               
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Exception found: {e.Message}");
+                return 0;
+            }
+        }
+
+
+        public async Task<int> updateMembresiaPaises(MembresiaPais pais, int membresia)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "UPDATE public.membresia_paises SET pais = @pais WHERE membresia = @membresia";
+                    var data = await connection.ExecuteAsync(script,
+                        new
+                        {
+                            pais = pais.Pais,
+                            membresia = membresia
+                        });
+                    return data;
+
+                }
+            }
+            catch (Exception e)
+            {
+
+                _logger.LogError($"Exception found: {e.Message}");
+                return 0;
+            }
+        }
+
     }
 }

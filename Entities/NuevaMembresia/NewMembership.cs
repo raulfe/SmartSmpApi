@@ -1,7 +1,7 @@
 ﻿using SmartBusinessAPI.Models;
 using System.Collections.Generic;
 
-namespace SmartBusinessAPI.Entities
+namespace SmartBusinessAPI.Entities.NuevaMembresia
 {
     public class NewMembership
     {
