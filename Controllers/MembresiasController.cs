@@ -32,6 +32,16 @@ namespace SmartBusinessAPI.Controllers
         }
 
         [Authorize]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> getMembresiaById(int id)
+        {
+            var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            _logger.LogInformation($"Request by {address} IP");
+            var data = await _repository.GetMembresiaById(id);
+            return Ok(data);
+        }
+
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> insertNewMembresia(NewMembership membre)
         {

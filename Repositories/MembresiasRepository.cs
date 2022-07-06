@@ -39,6 +39,26 @@ namespace SmartBusinessAPI.Repositories
 
         }
 
+        public async Task<NewMembership> GetMembresiaById(int id)
+        {
+            var data = await _membresias.getMembresiaById(id);
+            if(data == null)
+            {
+                throw new BusinessException("La membresia no existe");
+            }
+            var list = await _membresias.getMembresiaPais(id);
+            if(list == null || list.Count() == 0)
+            {
+                throw new BusinessException("La membresia no tiene paises relacionados");
+            }
+            var master = new NewMembership()
+            {
+                Membresia = data,
+                Paises = list.ToList()
+            };
+            return master;
+        }
+
         public async Task<bool> processNewMembership(NewMembership membresia)
 
         {

@@ -124,6 +124,24 @@ namespace SmartBusinessAPI.Mediator.Commands
             }
         }
 
+        public async Task<IEnumerable<MembresiaPais>> getMembresiaPais(int id)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "SELECT smart_pack FROM public.membresia_paises WHERE membresia = @membresia";
+                    var data = await connection.QueryAsync<MembresiaPais>(script, new { membresia = id });
+                    return data;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Exception found: {e.Message}");
+                return null;
+            }
+        }
+
         public async Task<Membresias> getMembresiaById(int membresia)
         {
             try

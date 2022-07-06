@@ -13,6 +13,6 @@
     "s3-prefix"     : "SmartBusinessAPI/",
     "template"      : "serverless.template",
     "template-parameters" : "",
-    "s3-bucket"           : "smartbusinesscorp",
+    "s3-bucket"           : "smartbusinesscorpapi",
     "stack-name"          : "SmartBusinessAPI"
 }

@@ -10,7 +10,7 @@ namespace SmartBusinessAPI.Interfaces
     {
         Task<IEnumerable<Membresias>> GetMembresias(MembresiasFilter filter);
         Task<bool> processNewMembership(NewMembership membresia);
-
+        Task<NewMembership> GetMembresiaById(int id);
         Task<bool> updateMembresia(updateMembership updateMembership);
     }
 }
