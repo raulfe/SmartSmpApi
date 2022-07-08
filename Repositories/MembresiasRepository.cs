@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SmartBusinessAPI.Entities;
+using SmartBusinessAPI.Entities.NuevaMembresia;
 using SmartBusinessAPI.Exceptions;
 using SmartBusinessAPI.Interfaces;
 using SmartBusinessAPI.Models;
@@ -77,5 +78,46 @@ namespace SmartBusinessAPI.Repositories
             return true;
 
         }
+
+
+        public async Task<bool> updateMembresia(updateMembership updateMembership) 
+        {
+            var codMembresia = await _membresias.getMembresiaById(updateMembership.membresia.Membresia);
+            if (codMembresia == null)
+            {
+                _logger.LogError("La Membresia no existe");
+                throw new BusinessException("La Membresia no existe");
+            }
+            if ( updateMembership.Paises.Count() == 0) 
+            {
+                _logger.LogError("La Membresia debe contener al menos un país donde aplicarse ");
+                throw new BusinessException(" La Mebresia debe contener al menos un pais donde aplicarse");
+            }
+            if (updateMembership.membresia == null) 
+            {
+                _logger.LogError("La Membresia no debe contener campos vacios");
+                throw new BusinessException(" La Membresia no debe contener campos vacios");
+            }
+            var resUpdate = await _membresias.updateMembership(updateMembership.membresia);
+            if (resUpdate == 0) 
+            {
+                _logger.LogError("La Membresia no pudo ser actualizada");
+                throw new BusinessException("La Membresia no pudo ser actualizada");
+            }
+            foreach (var pais in updateMembership.Paises) 
+            {
+                var resPais = await _membresias.updateMembresiaPaises(pais, updateMembership.membresia.Membresia);
+                if (resPais == 0) 
+                {
+                    _logger.LogError($"Error al actualizar la membresia {updateMembership.membresia.Membresia} con el pais {pais.Pais}");
+                    continue;
+                }
+
+            }
+
+            return true;
+
+        }
+
     }
 }

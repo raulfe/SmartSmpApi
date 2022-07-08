@@ -2,7 +2,7 @@
 
 namespace SmartBusinessAPI.Models
 {
-    public class Membresias
+    public partial class Membresias
     {
         public int Membresia { get; set; }
         public int Producto { get; set; }
