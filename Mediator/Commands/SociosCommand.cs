@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using SmartBusinessAPI.Entities;
+using SmartBusinessAPI.Entities.SociosDocument;
 using SmartBusinessAPI.Exceptions;
 using SmartBusinessAPI.Interfaces;
 using SmartBusinessAPI.Models;
@@ -102,5 +103,75 @@ namespace SmartBusinessAPI.Mediator.Commands
             }
 
         }
+
+        public async Task<int> updateSocioValidacion(SocioValidacion socioValida)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default"))) 
+                {
+                    var script = "UPDATE  public.socio_validacion SET estatus = @estatus, estatus_kyc = @estatus_kyc, fecha_validacion = @fecha_validacion, autorizado_por = @autorizado_por, fecha_update = @fecha_update)";
+                    var data = await connection.ExecuteAsync(script,
+                        new
+                        {
+                            estatus = socioValida.Estatus,
+                            estatus_kyc = socioValida.EstatusKyc,
+                            fecha_validacion = socioValida.FechaValidacion,
+                            autorizado_por = socioValida.AutorizadoPor,
+                            fecha_update = socioValida.FechaUpdate
+                        });
+                    return data;
+                }
+            }
+            catch (Exception e) 
+            {
+                _logger.LogError($"Exception found : {e.Message} ");
+                return 0;
+            }
+        }
+
+
+        public async Task<SocioValidacion> getLastValidation( int validacion)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "select * from public.socio_validacion where validacion =  @sc order by fecha_validacion DESC LIMIT 1";
+                    var data = await connection.QueryFirstAsync<SocioValidacion>(script, new { sc = validacion });
+                    return data;
+
+                }
+            }
+            catch (Exception)
+            {
+
+                return null;
+            }
+
+        }
+
+
+        public async Task <DataSocioDocumentacion> getDataSocioDocument(int socio) 
+        {
+            try 
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default"))) 
+                {
+                    var script = "select * from  public.socios aINNER JOIN socio_documentacion b ON a.validacion = b.validacion AND b.socio = a.socio ";
+
+                    var data = await connection.QueryFirstAsync<DataSocioDocumentacion> (script, new { sc = socio });
+                    return data;
+                }
+            }
+            catch (Exception) 
+            {
+                return null;
+            }
+        }
+
+
+
+
     }
 }
