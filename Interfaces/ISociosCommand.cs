@@ -13,5 +13,6 @@ namespace SmartBusinessAPI.Interfaces
         Task<Socios> getSocioByEmail(string email);
         Task<CountType> getSociosCount();
         Task<SociosR> getSocioByPosition(int position);
+        Task<IEnumerable<KycSociosList>> getSociosValidacion();
     }
 }

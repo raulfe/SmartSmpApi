@@ -58,7 +58,10 @@ namespace SmartBusinessAPI
             services.AddTransient<IMetamapRepository, MetamapRepository>();
             services.AddTransient<IAuth0Repository, Auth0Repository>();
             services.AddTransient<IMembresiasCommand, MembresiasCommand>();
+            services.AddTransient<IKycRepository, KycRepository>();
             services.AddTransient<IMembresiasRepository, MembresiasRepository>();
+            services.AddTransient<IPromocionesCommand, PromocionesCommand>();
+            services.AddTransient<IPromocionesRepository, PromocionesRepository>();
             services.AddSingleton<IMetamapAPI, MetamapAPI>();
             services.AddSingleton<IAuthAPI, AuthAPI>();
             services.AddControllers(options =>

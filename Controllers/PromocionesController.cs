@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SmartBusinessAPI.Entities;
-using SmartBusinessAPI.Entities.NuevosProducto;
+using SmartBusinessAPI.Entities.NuevaPromocion;
 using SmartBusinessAPI.Interfaces;
 using System.Threading.Tasks;
 
@@ -10,68 +9,48 @@ namespace SmartBusinessAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductosController : ControllerBase
+    public class PromocionesController : ControllerBase
     {
-        private readonly ILogger<ProductosController> _logger;
-        private readonly IProductosRepository _repository;
+        private readonly ILogger<PromocionesController> _logger;
+        private readonly IPromocionesRepository _repository;
 
-        public ProductosController(ILogger<ProductosController> logger, IProductosRepository repository)
+        public PromocionesController(ILogger<PromocionesController> logger, IPromocionesRepository repository)
         {
             _logger = logger;
             _repository = repository;
         }
 
         [Authorize]
-        [HttpGet("Planes/{tipo}")]
-        public async Task<IActionResult> getPlan(int tipo)
+        [HttpGet("List")]
+        public async Task<IActionResult> getPromociones()
         {
             var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
             _logger.LogInformation($"Request by {address} IP");
-            var data = await _repository.getPlan(tipo);
+            var data = await _repository.getPromociones();
             return Ok(data);
         }
 
         [Authorize]
-        [HttpGet("Smartpacks")]
-        public async Task<IActionResult> getSmartPacks()
+        [HttpGet("{id}")]
+        public async Task<IActionResult> getPromocionById(int id)
         {
             var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
             _logger.LogInformation($"Request by {address} IP");
-            var data = await _repository.getPaquetes();
+            var data = await _repository.getPromocionByIDCustom(id);
             return Ok(data);
         }
 
         [Authorize]
-        [HttpGet("Planes/General")]
-        public async Task<IActionResult> getPlans()
+        [HttpPost("Plan")]
+        public async Task<IActionResult> insertNewPromoPlan(NewPromocion promo)
         {
             var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
             _logger.LogInformation($"Request by {address} IP");
-            var data = await _repository.getPlans();
-            return Ok(data);
-        }
-
-        [Authorize]
-        [HttpGet("Plan/{id}")]
-        public async Task<IActionResult> getPlanById(int id)
-        {
-            var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-            _logger.LogInformation($"Request by {address} IP");
-            var data = await _repository.getPlanById(id);
-            return Ok(data);
-        }
-
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> insertNewPlan(NewProduct prod)
-        {
-            var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-            _logger.LogInformation($"Request by {address} IP");
-            var data = await _repository.processNewPlan(prod);
+            var data = await _repository.processNewPromoProduct(promo);
             var response = new
             {
                 Status = 200,
-                Response = $"Plan procesado",
+                Response = $"Promocion procesada",
                 Details = "Smart Business API",
                 Results = data
             };
@@ -80,16 +59,16 @@ namespace SmartBusinessAPI.Controllers
         }
 
         [Authorize]
-        [HttpPut("Status")]
-        public async Task<IActionResult> updateStatus(StatusProducto prod)
+        [HttpPost("Membresia")]
+        public async Task<IActionResult> insertNewPromoMembresia(NewPromocionMembresia promo)
         {
             var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
             _logger.LogInformation($"Request by {address} IP");
-            var data = await _repository.updateStatusProducto(prod);
+            var data = await _repository.processNewPromoMembresia(promo);
             var response = new
             {
                 Status = 200,
-                Response = $"Plan actualizado",
+                Response = $"Promocion procesada",
                 Details = "Smart Business API",
                 Results = data
             };
@@ -98,21 +77,57 @@ namespace SmartBusinessAPI.Controllers
         }
 
         [Authorize]
-        [HttpPut]
-        public async Task<IActionResult> updatePlan(UpdateProduct prod)
+        [HttpPut("Plan")]
+        public async Task<IActionResult> updatePromoProduct(NewPromocion promo)
         {
             var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
             _logger.LogInformation($"Request by {address} IP");
-            var data = await _repository.updatePlan(prod);
+            var data = await _repository.updatePromoProduct(promo);
             var response = new
             {
                 Status = 200,
-                Response = $"Plan actualizado",
+                Response = $"Promocion actualizada",
                 Details = "Smart Business API",
                 Results = data
             };
             return Ok(response);
+
         }
 
+        [Authorize]
+        [HttpPut("Membresia")]
+        public async Task<IActionResult> updatePromoMembresia(NewPromocionMembresia promo)
+        {
+            var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            _logger.LogInformation($"Request by {address} IP");
+            var data = await _repository.updatePromoMembresias(promo);
+            var response = new
+            {
+                Status = 200,
+                Response = $"Promocion actualizada",
+                Details = "Smart Business API",
+                Results = data
+            };
+            return Ok(response);
+
+        }
+
+        [Authorize]
+        [HttpPut("Status/{status}/{id}")]
+        public async Task<IActionResult> insertNewPromoPlan(bool status, int id)
+        {
+            var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            _logger.LogInformation($"Request by {address} IP");
+            var data = await _repository.updateStatus(status, id);
+            var response = new
+            {
+                Status = 200,
+                Response = $"Promocion actualizada",
+                Details = "Smart Business API",
+                Results = data
+            };
+            return Ok(response);
+
+        }
     }
 }

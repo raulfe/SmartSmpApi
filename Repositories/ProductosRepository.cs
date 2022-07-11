@@ -37,7 +37,15 @@ namespace SmartBusinessAPI.Repositories
             }
             return data;
         }
-
+        public async Task<IEnumerable<Paquetes>> getPaquetes()
+        {
+            var data = await _productos.getPaquetes();
+            if (data.Count() == 0 || data == null)
+            {
+                throw new BusinessException("No hay smartpacks en la db");
+            }
+            return data;
+        }
         public async Task<object> getPlanById(int id)
         {
             var data = await _productos.getPlanById(id);
@@ -72,7 +80,6 @@ namespace SmartBusinessAPI.Repositories
                 throw new BusinessException("Plan no identificado / Tipo no valido");
             }
         }
-
         public async Task<int> updateStatusProducto(StatusProducto prod)
         {
             var plan = await _productos.getPlanById(prod.Producto);
@@ -89,7 +96,6 @@ namespace SmartBusinessAPI.Repositories
             }
             return data;
         }
-
         public async Task<bool> updatePlan(UpdateProduct prod)
         {
             var codValidation = await _productos.getPlanById(prod.Plan.Producto);

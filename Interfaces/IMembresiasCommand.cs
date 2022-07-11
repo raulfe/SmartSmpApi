@@ -13,6 +13,7 @@ namespace SmartBusinessAPI.Interfaces
         Task<Membresias> getMembresiaById(int membresia);
         Task<IEnumerable<MembresiaPais>> getMembresiaPais(int id);
         Task<int> updateMembership(Membresias membership);
-        Task<int> updateMembresiaPaises(MembresiaPais pais, int membresia);
+        Task<int> deleteMembresiaPaises(int membresia);
+        Task<int> updateMembershipStatus(bool status, int membership);
     }
 }

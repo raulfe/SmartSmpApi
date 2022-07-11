@@ -12,5 +12,6 @@ namespace SmartBusinessAPI.Interfaces
         Task<bool> processNewMembership(NewMembership membresia);
         Task<NewMembership> GetMembresiaById(int id);
         Task<bool> updateMembresia(updateMembership updateMembership);
+        Task<bool> updateMembresiaStatus(bool status, int membership);
     }
 }

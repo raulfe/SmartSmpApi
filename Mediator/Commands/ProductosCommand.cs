@@ -59,6 +59,24 @@ namespace SmartBusinessAPI.Mediator.Commands
             }
         }
 
+        public async Task<IEnumerable<Paquetes>> getPaquetes()
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "SELECT * FROM public.paquetes";
+                    var data = await connection.QueryAsync<Paquetes>(script);
+                    return data;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Exception found: {e.Message}");
+                return null;
+            }
+        }
+
         public async Task<IEnumerable<ProductoPais>> getPaisByPlan(int id)
         {
             try

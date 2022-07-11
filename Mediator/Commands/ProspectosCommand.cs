@@ -2,10 +2,12 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Npgsql;
+using SmartBusinessAPI.Entities;
 using SmartBusinessAPI.Entities.DTOs;
 using SmartBusinessAPI.Interfaces;
 using SmartBusinessAPI.Models;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SmartBusinessAPI.Mediator.Commands
@@ -36,10 +38,25 @@ namespace SmartBusinessAPI.Mediator.Commands
                 _logger.LogError($"Exception : {e.Message}");
                 return null;
             }
+        }
 
+        public async Task<IEnumerable<KycProspectosList>> getProspectoValidacion()
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "SELECT a.prospecto,b.estatus,a.nombre,a.apellido_pat,a.apellido_mat,a.email,b.fecha_kyc FROM public.prospecto_validacion b INNER JOIN public.prospectos a on a.prospecto = b.prospecto";
+                    var data = await connection.QueryAsync<KycProspectosList>(script);
+                    return data;
 
-            
-
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Exception : {e.Message}");
+                return null;
+            }
         }
 
         public async Task<Prospectos> getProspectoByEmail(string email)
@@ -107,8 +124,27 @@ namespace SmartBusinessAPI.Mediator.Commands
             {
                 using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
                 {
-                    var script = "SELECT * FROM public.prospecto_validacion WHERE prospecto = @prospecto ORDER BY fecha_update DESC LIMIT 1";
+                    var script = "SELECT * FROM public.prospecto_validacion WHERE prospecto = @prospecto ORDER BY validacion DESC LIMIT 1";
                     var data = await connection.QueryFirstAsync<ProspectoValidacionR>(script, new { prospecto = id });
+                    return data;
+
+                }
+            }
+            catch (Exception e)
+            {
+
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<ProspectoValidacion>> getValidationesById(int id)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "SELECT * FROM public.prospecto_validacion WHERE prospecto = @prospecto ORDER BY validacion DESC";
+                    var data = await connection.QueryAsync<ProspectoValidacion>(script, new { prospecto = id });
                     return data;
 
                 }

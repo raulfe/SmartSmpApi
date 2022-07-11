@@ -14,5 +14,6 @@ namespace SmartBusinessAPI.Interfaces
         Task<object> getPlanById(int id);
         Task<bool> updatePlan(UpdateProduct prod);
         Task<int> updateStatusProducto(StatusProducto prod);
+        Task<IEnumerable<Paquetes>> getPaquetes();
     }
 }

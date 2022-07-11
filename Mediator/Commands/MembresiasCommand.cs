@@ -160,7 +160,6 @@ namespace SmartBusinessAPI.Mediator.Commands
             }
         }
 
-
         public async Task<int> updateMembership(Membresias membership) 
         {
             try
@@ -196,18 +195,40 @@ namespace SmartBusinessAPI.Mediator.Commands
             }
         }
 
-
-        public async Task<int> updateMembresiaPaises(MembresiaPais pais, int membresia)
+        public async Task<int> updateMembershipStatus(bool status,int membership)
         {
             try
             {
                 using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
                 {
-                    var script = "UPDATE public.membresia_paises SET pais = @pais WHERE membresia = @membresia";
+                    var script = "UPDATE public.mebresias SET activo = @activo WHERE membresia = @membresia";
                     var data = await connection.ExecuteAsync(script,
                         new
                         {
-                            pais = pais.Pais,
+                            membresia = membership,
+                            activo = status
+
+                        });
+                    return data;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Exception found: {e.Message}");
+                return 0;
+            }
+        }
+
+        public async Task<int> deleteMembresiaPaises(int membresia)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "DELETE FROM public.membresia_paises WHERE membresia = @membresia";
+                    var data = await connection.ExecuteAsync(script,
+                        new
+                        {
                             membresia = membresia
                         });
                     return data;

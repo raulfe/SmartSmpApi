@@ -99,6 +99,15 @@ namespace SmartBusinessAPI.Repositories
 
         }
 
+        public async Task<bool> updateMembresiaStatus(bool status,int membership)
+        {
+            var data = await _membresias.updateMembershipStatus(status, membership);
+            if(data == 0)
+            {
+                throw new BusinessException("La membrecia no pudo ser actualizada");
+            }
+            return true;
+        }
 
         public async Task<bool> updateMembresia(updateMembership updateMembership) 
         {
@@ -124,9 +133,14 @@ namespace SmartBusinessAPI.Repositories
                 _logger.LogError("La Membresia no pudo ser actualizada");
                 throw new BusinessException("La Membresia no pudo ser actualizada");
             }
+            var deletePais = await _membresias.deleteMembresiaPaises(updateMembership.membresia.Membresia);
+            if(deletePais == 0)
+            {
+                _logger.LogError("Los paises no pudieron ser eliminados");
+            }
             foreach (var pais in updateMembership.Paises) 
             {
-                var resPais = await _membresias.updateMembresiaPaises(pais, updateMembership.membresia.Membresia);
+                var resPais = await _membresias.insertMembresiaPais(pais, updateMembership.membresia.Membresia);
                 if (resPais == 0) 
                 {
                     _logger.LogError($"Error al actualizar la membresia {updateMembership.membresia.Membresia} con el pais {pais.Pais}");
@@ -134,7 +148,6 @@ namespace SmartBusinessAPI.Repositories
                 }
 
             }
-
             return true;
 
         }

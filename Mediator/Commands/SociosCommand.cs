@@ -43,6 +43,26 @@ namespace SmartBusinessAPI.Mediator.Commands
             
         }
 
+        public async Task<IEnumerable<KycSociosList>> getSociosValidacion()
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "SELECT a.socio,b.estatus,a.nombre,a.apellido_pat,a.apellido_mat,a.email,b.fecha_kyc  FROM public.socio_validacion b INNER JOIN public.socios a on a.socio = b.socio";
+                    var data = await connection.QueryAsync<KycSociosList>(script);
+                    return data;
+
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Exception found {e.Message}");
+                return null;
+            }
+
+        }
+
         public async Task<Socios> getSocioByEmail(string email)
         {
             try

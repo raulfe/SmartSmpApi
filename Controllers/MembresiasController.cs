@@ -61,7 +61,6 @@ namespace SmartBusinessAPI.Controllers
 
         [Authorize]
         [HttpPut]
-
         public async Task<IActionResult> updateMembresia(updateMembership membreUpdate)
         {
             var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
@@ -75,10 +74,23 @@ namespace SmartBusinessAPI.Controllers
                 Results = data
             };
             return Ok(response);
+        }
 
-
-
-
+        [Authorize]
+        [HttpPut("Status/{status}/{membership}")]
+        public async Task<IActionResult> updateMembresiaStatus(bool status, int membership)
+        {
+            var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            _logger.LogInformation($"Request by {address} IP");
+            var data = await _repository.updateMembresiaStatus(status,membership);
+            var response = new
+            {
+                Status = 200,
+                Response = "Estatus Actualizado",
+                Details = "Smart Business API",
+                Results = data
+            };
+            return Ok(response);
         }
     }
 }

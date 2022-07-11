@@ -25,5 +25,6 @@ namespace SmartBusinessAPI.Interfaces
         Task<int> updateSmartPack(Paquetes smartpack);
         Task<int> deletePaquetesProductos(int id);
         Task<int> updateStatusProducto(StatusProducto prod);
+        Task<IEnumerable<Paquetes>> getPaquetes();
     }
 }
