@@ -9,5 +9,6 @@ namespace SmartBusinessAPI.Interfaces
         Task<IEnumerable<KycProspectosList>> getListProspectoValidacion();
         Task<IEnumerable<KycSociosList>> getListSociosValidacion();
         Task<object> getProspectoValidacionInfo(int id);
+        Task<object> getSocioValidacionInfo(int id);
     }
 }

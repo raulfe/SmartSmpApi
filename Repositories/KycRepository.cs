@@ -38,8 +38,8 @@ namespace SmartBusinessAPI.Repositories
             var data = await _socios.getSociosValidacion();
             if (data.Count() == 0 || data == null)
             {
-                _logger.LogError("No hay validaciones de prospectos en la db");
-                throw new BusinessException("No hay validaciones de prospectos en la db");
+                _logger.LogError("No hay validaciones de socios en la db");
+                throw new BusinessException("No hay validaciones de socios en la db");
             }
             return data;
         }
@@ -61,6 +61,29 @@ namespace SmartBusinessAPI.Repositories
             var response = new
             {
                 Prospecto = prospecto,
+                Informacion = info,
+                Historico = historico
+            };
+            return response;
+        }
+
+        public async Task<object> getSocioValidacionInfo(int id)
+        {
+            var historico = await _socios.getValidationesById(id);
+            if (historico.Count() == 0 || historico == null)
+            {
+                _logger.LogError("El socio no tiene historico de validaciones");
+            }
+            var socio = await _socios.getSocioById(id);
+            if (socio == null)
+            {
+                _logger.LogError("El socio no existe");
+                throw new BusinessException("El socio no existe");
+            }
+            var info = await _socios.getInfoById(id);
+            var response = new
+            {
+                Socio = socio,
                 Informacion = info,
                 Historico = historico
             };

@@ -48,5 +48,15 @@ namespace SmartBusinessAPI.Controllers
             var data = await _repository.getListSociosValidacion();
             return Ok(data);
         }
+
+        [Authorize]
+        [HttpGet("Socios/{id}")]
+        public async Task<IActionResult> getSocioValidacionByID(int id)
+        {
+            var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            _logger.LogInformation($"Request by {address} IP");
+            var data = await _repository.getSocioValidacionInfo(id);
+            return Ok(data);
+        }
     }
 }

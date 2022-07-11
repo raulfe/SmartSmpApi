@@ -12,5 +12,6 @@ namespace SmartBusinessAPI.Interfaces
         Task<Socios> getSocioByID(int id);
         Task<CountType> getSociosCount();
         Task<SociosR> getSocioByPosition(int id);
+
     }
 }

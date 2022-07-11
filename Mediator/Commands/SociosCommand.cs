@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using SmartBusinessAPI.Entities;
+using SmartBusinessAPI.Entities.DTOs;
 using SmartBusinessAPI.Exceptions;
 using SmartBusinessAPI.Interfaces;
 using SmartBusinessAPI.Models;
@@ -49,7 +50,7 @@ namespace SmartBusinessAPI.Mediator.Commands
             {
                 using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
                 {
-                    var script = "SELECT a.socio,b.estatus,a.nombre,a.apellido_pat,a.apellido_mat,a.email,b.fecha_kyc  FROM public.socio_validacion b INNER JOIN public.socios a on a.socio = b.socio";
+                    var script = "SELECT a.socio,b.estatus,a.nombre,a.apellido_pat,a.apellido_mat,a.email,b.fecha_update FROM public.socio_validacion b INNER JOIN public.socios a on a.socio = b.socio";
                     var data = await connection.QueryAsync<KycSociosList>(script);
                     return data;
 
@@ -81,6 +82,81 @@ namespace SmartBusinessAPI.Mediator.Commands
                 return null;
             }
             
+        }
+        public async Task<Validacion> getVerified(int id)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "SELECT * FROM public.socio_validacion WHERE socio = @sc ORDER BY fecha_insert LIMIT 1";
+                    var data = await connection.QueryFirstAsync<Validacion>(script, new { sc = id });
+                    return data;
+
+                }
+            }
+            catch (Exception e)
+            {
+
+                return null;
+            }
+        }
+
+        public async Task<SocioInfo> getInfoById(int id)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "SELECT * FROM public.socio_info WHERE socio = @sc";
+                    var data = await connection.QueryFirstAsync<SocioInfo>(script, new { sc = id });
+                    return data;
+
+                }
+            }
+            catch (Exception e)
+            {
+
+                return null;
+            }
+        }
+
+        public async Task<SocioValidacion> getValidationById(int id)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "SELECT * FROM public.socio_validacion WHERE socio = @socio ORDER BY validacion DESC LIMIT 1";
+                    var data = await connection.QueryFirstAsync<SocioValidacion>(script, new { socio = id });
+                    return data;
+
+                }
+            }
+            catch (Exception e)
+            {
+
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<SocioValidacion>> getValidationesById(int id)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "SELECT * FROM public.socio_validacion WHERE socio = @socio ORDER BY validacion DESC";
+                    var data = await connection.QueryAsync<SocioValidacion>(script, new { socio = id });
+                    return data;
+
+                }
+            }
+            catch (Exception e)
+            {
+
+                return null;
+            }
         }
 
         public async Task<SociosR> getSocioByPosition(int position)

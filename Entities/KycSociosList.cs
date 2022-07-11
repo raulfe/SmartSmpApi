@@ -11,5 +11,6 @@ namespace SmartBusinessAPI.Entities
         public string Apellido_Mat { get; set; }
         public string Email { get; set; }
         public DateTime Fecha_kyc { get; set; }
+
     }
 }
