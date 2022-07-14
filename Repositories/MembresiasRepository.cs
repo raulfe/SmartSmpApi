@@ -146,7 +146,6 @@ namespace SmartBusinessAPI.Repositories
                     _logger.LogError($"Error al actualizar la membresia {updateMembership.membresia.Membresia} con el pais {pais.Pais}");
                     continue;
                 }
-
             }
             return true;
 

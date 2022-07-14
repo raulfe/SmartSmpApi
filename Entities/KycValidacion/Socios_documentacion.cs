@@ -1,12 +1,11 @@
 ﻿using System;
 
-
-namespace SmartBusinessAPI.Models
+namespace SmartBusinessAPI.Entities.KycValidacion
 {
-    public partial class SocioDocumentacion
+    public class Socios_documentacion
     {
+        public string Nombre { get; set; }
         public int Anexo { get; set; }
-        public int Validacion { get; set; }
         public int Socio { get; set; }
         public int Tipo { get; set; }
         public string Filename { get; set; }

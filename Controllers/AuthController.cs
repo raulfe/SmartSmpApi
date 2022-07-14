@@ -22,7 +22,7 @@ namespace SmartBusinessAPI.Controllers
         private readonly ILoginRepository _repository;
         private readonly IAuth0Repository _auth;
 
-        public AuthController(ILogger<AuthController> logger,ILoginRepository repository, IConfiguration configuration, IAuth0Repository auth)
+        public AuthController(ILogger<AuthController> logger, ILoginRepository repository, IConfiguration configuration, IAuth0Repository auth)
         {
             _logger = logger;
             _repository = repository;
@@ -45,7 +45,7 @@ namespace SmartBusinessAPI.Controllers
         {
             var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
             _logger.LogInformation($"Request by {address} IP");
-            if(secret == _configuration["Authentication:SecretKey"])
+            if (secret == _configuration["Authentication:SecretKey"])
             {
                 var token = GenerateToken();
                 var response = new
@@ -78,6 +78,28 @@ namespace SmartBusinessAPI.Controllers
             };
             return Ok(response);
         }
+
+        [Authorize]
+        [HttpGet("{email}")]
+        public async Task<IActionResult> getAuthInfo(string email)
+        {
+            var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            _logger.LogInformation($"Request by {address} IP");
+            var data = await _repository.getValidation(email);
+            return Ok(data);
+        }
+
+        [Authorize]
+        [HttpGet("Metamap/{email}")]
+        public async Task<IActionResult> getAuthMetaInfo(string email)
+        {
+            var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            _logger.LogInformation($"Request by {address} IP");
+            var data = await _repository.getMetaValidation(email);
+            return Ok(data);
+        }
+
+
         private string GenerateToken()
         {
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Authentication:SecretKey"]));

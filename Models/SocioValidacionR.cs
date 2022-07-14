@@ -1,11 +1,8 @@
-﻿using SmartBusinessAPI.Entities;
-using System;
-
-
+﻿using System;
 
 namespace SmartBusinessAPI.Models
 {
-    public partial class SocioValidacion
+    public class SocioValidacionR
     {
         public int Validacion { get; set; }
         public int Socio { get; set; }
@@ -22,7 +19,6 @@ namespace SmartBusinessAPI.Models
         public DateTime Fecha_Update { get; set; }
         public string Id_Validation { get; set; }
         public string Id_Related { get; set; }
-        public JsonParameter Payload { get; set; }
-
+        public string Payload { get; set; }
     }
 }

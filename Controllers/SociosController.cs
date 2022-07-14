@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SmartBusinessAPI.Entities;
 using SmartBusinessAPI.Interfaces;
 using System.Threading.Tasks;
 
@@ -30,6 +31,16 @@ namespace SmartBusinessAPI.Controllers
         }
 
         [Authorize]
+        [HttpGet("Info/{id}")]
+        public async Task<IActionResult> getSocioByIdInfo(int id)
+        {
+            var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            _logger.LogInformation($"Request by {address} IP");
+            var data = await _repository.getSocioByIDinfo(id);
+            return Ok(data);
+        }
+
+        [Authorize]
         [HttpGet("Count")]
         public async Task<IActionResult> getSociosCount()
         {
@@ -47,6 +58,34 @@ namespace SmartBusinessAPI.Controllers
             _logger.LogInformation($"Request by {address} IP");
             var data = await _repository.getSocioByPosition(position);
             return Ok(data);
+        }
+
+        [Authorize]
+        [HttpGet("Documentacion/{id}")]
+        public async Task<IActionResult> getDocumentById(int id)
+        {
+            var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            _logger.LogInformation($"Request by {address} IP");
+            var data = await _repository.getDocumentById(id);
+            return Ok(data);
+        }
+
+
+        [Authorize]
+        [HttpPut("Validacion")]
+        public async Task<IActionResult> updateSocioValidacion(Validacionupdate socioValidacion)
+        {
+            var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            _logger.LogInformation($"Request by {address} IP");
+            var data = await _repository.updateSocioValidacion(socioValidacion);
+            var response = new
+            {
+                Status = 200,
+                Response = $"Socio (validacion) actualizado con éxito",
+                Details = "Smart Business API",
+                Results = data
+            };
+            return Ok(response);
         }
     }
 }

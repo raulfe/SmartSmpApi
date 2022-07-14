@@ -1,6 +1,4 @@
-﻿using SmartBusinessAPI.Entities.DTOs;
-using SmartBusinessAPI.Models;
-using System.Collections.Generic;
+﻿using SmartBusinessAPI.Entities.ValidationStatus;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 
@@ -10,5 +8,7 @@ namespace SmartBusinessAPI.Interfaces
     {
         Task<int> emailValidation(string email, int padre);
         JwtSecurityToken decodeToken(string token);
+        Task<object> getValidation(string email);
+        Task<object> getMetaValidation(string email);
     }
 }

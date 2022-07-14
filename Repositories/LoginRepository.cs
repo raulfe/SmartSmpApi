@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using SmartBusinessAPI.Entities.ValidationStatus;
 using SmartBusinessAPI.Exceptions;
 using SmartBusinessAPI.Interfaces;
 using SmartBusinessAPI.Models;
@@ -109,6 +110,44 @@ namespace SmartBusinessAPI.Repositories
                 throw new BusinessException(e.Message);
             }
 
+        }
+
+        public async Task<object> getValidation(string email)
+        {
+            var data = await _prospecto.getProspectoByEmailAuth(email);
+            var data2 = await _socios.getSocioByEmailAuth(email);
+            if (data == null && data2 == null)
+            {
+                _logger.LogError("El prospecto no existe");
+                throw new BusinessException("El prospecto no existe");
+            }else if(data != null)
+            {
+                return data;
+            }
+            else
+            {
+                return data2;
+            }
+            
+        }
+
+        public async Task<object> getMetaValidation(string email)
+        {
+            var data = await _prospecto.getProspectoByEmailMeta(email);
+            var data2 = await _socios.getSocioByEmailMeta(email);
+            if(data == null && data2 == null)
+            {
+                _logger.LogError("El socio no existe");
+                throw new BusinessException("El socio no existe");
+            }
+            else if (data != null)
+            {
+                return data;
+            }
+            else
+            {
+                return data2;
+            }
         }
 
         private bool IsValidEmail(string email)

@@ -66,5 +66,28 @@ namespace SmartBusinessAPI.Repositories
             };
             return response;
         }
+
+        public async Task<object> getSocioValidacionInfo(int id)
+        {
+            var historico = await _socios.getValidationesById(id);
+            if (historico.Count() == 0 || historico == null)
+            {
+                _logger.LogError("El socio no tiene historico de validaciones");
+            }
+            var socio = await _socios.getSocioById(id);
+            if (socio == null)
+            {
+                _logger.LogError("El prospecto no existe");
+                throw new BusinessException("El prospecto no existe");
+            }
+            var info = await _socios.getInfoById(id);
+            var response = new
+            {
+                Socio = socio,
+                Informacion = info,
+                Historico = historico
+            };
+            return response;
+        }
     }
 }

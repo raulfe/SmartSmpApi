@@ -56,6 +56,7 @@ namespace SmartBusinessAPI
             services.AddTransient<ICatalogsRepository, CatalogsRepository>();
             services.AddTransient<IEnumsCommand, EnumsCommand>();
             services.AddTransient<IMetamapRepository, MetamapRepository>();
+            services.AddTransient<IProspectosRepository, ProspectosRepository>();
             services.AddTransient<IAuth0Repository, Auth0Repository>();
             services.AddTransient<IMembresiasCommand, MembresiasCommand>();
             services.AddTransient<IKycRepository, KycRepository>();
