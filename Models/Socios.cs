@@ -25,6 +25,8 @@ namespace SmartBusinessAPI.Models
         public DateTime Fecha_Insert { get; set; }
         public DateTime Fecha_Update { get; set; }
         public bool Email_Verified { get; set; }
+
+        public int Validacion { get; set; }
         public bool Etl { get; set; }
 
     }

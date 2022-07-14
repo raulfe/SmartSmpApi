@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SmartBusinessAPI.Entities;
 using SmartBusinessAPI.Interfaces;
 using SmartBusinessAPI.Models;
 using System.Threading.Tasks;
@@ -50,28 +51,32 @@ namespace SmartBusinessAPI.Controllers
             return Ok(data);
         }
 
-
         [Authorize]
-        [HttpPut("SocioValidacion/{socio}")]
-        public async Task<IActionResult> updateSociosValidacion(SocioValidacion socioValida, int socio)
-        {
-            var addres = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-            _logger.LogInformation($"Request by {addres} IP");
-            var data = await _repository.updateSociosValidacion(socioValida, socio);
-            return Ok(data);
-        }
-
-
-        [Authorize]
-        [HttpGet("DocumentSocio")]
-        public async Task<IActionResult> getDataSocioDocumentacion(int socio) 
+        [HttpGet("/Socio/Documentacion/{id}")]
+        public async Task<IActionResult> getDocumentById(int id)
         {
             var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
             _logger.LogInformation($"Request by {address} IP");
-            var data = await _repository.getDataSocioDocumentacion(socio);
+            var data = await _repository.getDocumentById(id);
             return Ok(data);
         }
 
 
+        [Authorize]
+        [HttpPut("/Socios/Validacion")]
+        public async Task<IActionResult> updateSocioValidacion(Validacionupdate socioValidacion)
+        {
+            var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            _logger.LogInformation($"Request by {address} IP");
+            var data = await _repository.updateSocioValidacion(socioValidacion);
+            var response = new
+            {
+                Status = 200,
+                Response = $"Socio (validacion) actualizado con éxito",
+                Details = "Smart Business API",
+                Results = data
+            };
+            return Ok(response);
+        }
     }
 }

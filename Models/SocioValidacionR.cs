@@ -1,17 +1,13 @@
-﻿using SmartBusinessAPI.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-
-// Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
-// If you have enabled NRTs for your project, then un-comment the following line:
-// #nullable disable
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SmartBusinessAPI.Models
 {
-    public partial class SocioValidacion
+    public class SocioValidacionR
     {
-        public int Validacion { get; set;  }
+        public int Validacion { get; set; }
         public int Socio { get; set; }
         public int Estatus { get; set; }
         public DateTime? FechaValidacion { get; set; }
@@ -22,12 +18,10 @@ namespace SmartBusinessAPI.Models
         public string Observaciones { get; set; }
         public string ValidadoPor { get; set; }
         public string AutorizadoPor { get; set; }
-        public JsonParameter Payload { get; set; }
+        public string Payload { get; set; }
         public string IdValidation { get; set; }
         public string IdRelated { get; set; }
         public DateTime FechaInsert { get; set; }
         public DateTime FechaUpdate { get; set; }
-
-        
     }
 }

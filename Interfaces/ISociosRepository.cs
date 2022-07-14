@@ -1,5 +1,5 @@
 ﻿using SmartBusinessAPI.Entities;
-using SmartBusinessAPI.Entities.SociosDocument;
+using SmartBusinessAPI.Entities.Socios;
 using SmartBusinessAPI.Models;
 using System;
 using System.Collections.Generic;
@@ -13,9 +13,7 @@ namespace SmartBusinessAPI.Interfaces
         Task<Socios> getSocioByID(int id);
         Task<CountType> getSociosCount();
         Task<SociosR> getSocioByPosition(int id);
-        Task<bool> updateSociosValidacion(SocioValidacion socioValida, int socio);
-
-        Task<DataSocioDocumentacion> getDataSocioDocumentacion(int socio);
-
+        Task<Socios_documentacion> getDocumentById(int id);
+        Task<bool> updateSocioValidacion(Validacionupdate socioValidacion);
     }
 }

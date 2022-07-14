@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SmartBusinessAPI.Entities;
-using SmartBusinessAPI.Entities.SociosDocument;
+using SmartBusinessAPI.Entities.Socios;
 using SmartBusinessAPI.Exceptions;
 using SmartBusinessAPI.Interfaces;
 using SmartBusinessAPI.Models;
@@ -65,37 +66,78 @@ namespace SmartBusinessAPI.Repositories
             }
         }
 
-
-        public async Task<bool> updateSociosValidacion(SocioValidacion socioValida,int socio) 
+        public async Task<Socios_documentacion> getDocumentById(int id) 
         {
-            var numSocio = await _socios.getSocioById(socio); 
-            if (numSocio == null) 
+            try 
             {
-                _logger.LogError("El socio no existe");
-                throw new BusinessException("El socio no existe");
+                var data = await _socios.getDocumentById(id);
+                return data;
             }
-            var data = await _socios.updateSocioValidacion(socioValida);
-            if (data == 0) 
+            catch ( Exception e) 
             {
-                _logger.LogError("La Validación no se actualizo");
-                throw new BusinessException("La Validación no se actualizo");
+                throw new BusinessException($"Exception found: {e.Message}");
+            }
+        }
+
+        public async Task<bool> updateSocioValidacion(Validacionupdate socioValidacion) 
+        {
+            var socio = await _socios.getSocioById(socioValidacion.Id);
+            if ( socio == null)
+            {
+                _logger.LogError("El socio buscado no existe");
+                throw new BusinessException("El socio buscado no existe");
+            }
+
+            var validacion = await _socios.getSocioValidacionbyValidacion(socio.Validacion);
+            if (validacion == null) 
+            {
+                _logger.LogError("El socio no cuenta con Id de validacion existente");
+                throw new BusinessException("El socio no cuenta con Id de validacion existente");
+            }
+
+            //Comente esta parte porque no se si es necesario validar si esta Auroizado_por y de ser así, si me enviaran ese dato para el Update
+            //if (validacion.AutorizadoPor == null) 
+            //{
+            //    _logger.LogError("El socio no cuenta con persona que autorice el proceso");
+            //    throw new BusinessException("El socio no cuenta con persona que autorice el proceso");
+            //}
+            var validation = new SocioValidacion()
+            {
+                Socio = validacion.Socio,
+                Estatus = socioValidacion.Estatus,
+                FechaValidacion = validacion.FechaValidacion,
+                EstatusKyc = validacion.EstatusKyc,
+                FechaKyc = DateTime.Now,
+                FechaEmpresa = validacion.FechaEmpresa,
+                ResultadoKyc = validacion.ResultadoKyc,
+                Observaciones = socioValidacion.Observaciones,
+                ValidadoPor = validacion.ValidadoPor,
+                AutorizadoPor = validacion.AutorizadoPor,
+                Payload = new JsonParameter(JsonConvert.SerializeObject(validacion)),
+                IdValidation = validacion.IdValidation,
+                IdRelated = validacion.IdRelated,
+                FechaInsert = DateTime.Now,
+                FechaUpdate = DateTime.Now,
+            };
+            var validationResponse = await _socios.insertSocioValidacion(validation);
+            if (validationResponse == 0)
+            {
+                throw new BusinessException("Lo sentimos hubo un problema al registrar esta nueva validacion");
+            }
+            var lastValidacion = await _socios.getLastValidacionById(validacion.Socio);
+            if ( lastValidacion == null)
+            {
+                _logger.LogError("No pudimos encontrar la ultima validacion del socio");
+                throw new BusinessException("No pudimos encontrar la ultima validacion del socio");
+
+            }
+            var resUpdate = await _socios.updateSocioIdValidacion(lastValidacion.Validacion, lastValidacion.Socio);
+            if (resUpdate == 0 ) 
+            {
+                _logger.LogError("La Validacion del Socio no pudo ser actualizada");
+                throw new BusinessException("La Validacion del Socio no pudo ser actualizada");
             }
             return true;
         }
-
-        public async Task<DataSocioDocumentacion> getDataSocioDocumentacion(int socio) 
-        {
-            try
-            {
-                var data = await _socios.getDataSocioDocument(socio);
-                return data;
-            }
-            catch (Exception e)
-            {
-
-                throw new BusinessException($"Exception found: {e.Message}");
-            }     
-        }
     }
-
 }

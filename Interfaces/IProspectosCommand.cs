@@ -1,4 +1,5 @@
 ﻿using SmartBusinessAPI.Entities.DTOs;
+using SmartBusinessAPI.Entities.Prospectos;
 using SmartBusinessAPI.Models;
 using System.Threading.Tasks;
 
@@ -19,5 +20,9 @@ namespace SmartBusinessAPI.Interfaces
         Task<ProspectoInfo> getInfoById(int id);
         Task<int> updateProspectoValidationInfo(int validation, int prospecto);
         Task<Validacion> getVerified(int id);
+        Task<Prospectos_documentacion> getDocumentById(int id);
+        Task<ProspectoValidacionR> getProspectoValidacionbyValidacion(int validacionId);
+
+        Task<int> insertProspectoValidacionComplete(ProspectoValidacion prospectoValida);
     }
 }

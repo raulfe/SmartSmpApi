@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using SmartBusinessAPI.Entities.DTOs;
+using SmartBusinessAPI.Entities.Prospectos;
 using SmartBusinessAPI.Interfaces;
 using SmartBusinessAPI.Models;
 using System;
@@ -119,6 +120,26 @@ namespace SmartBusinessAPI.Mediator.Commands
                 return null;
             }
         }
+
+        public async Task<ProspectoValidacionR> getProspectoValidacionbyValidacion(int validacionId)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "SELECT * FROM public.prospecto_validacion WHERE validacionId = @validacion ";
+                    var data = await connection.QueryFirstAsync<ProspectoValidacionR>(script, new { validacion = validacionId });
+                    return data;
+                }
+
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+
 
         public async Task<int> insertInteresado(Prospectos prospecto)
         {
@@ -347,6 +368,62 @@ namespace SmartBusinessAPI.Mediator.Commands
                 return 0;
             }
         }
+
+        public async Task<Prospectos_documentacion> getDocumentById(int id)
+        {
+            try 
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default"))) 
+                {
+                    var script = "SELECT e.nombre,d. * FROM public.enum e INNER JOIN public.prospecto_documentacion d ON d.tipo = e.codigo INNER JOIN public.prospectos f ON f.prospecto = d.prospecto WHERE (f.prospecto = @pr) and(e.categoria = 'TipoDocumento')";
+                    var data = await connection.QueryFirstAsync<Prospectos_documentacion>(script, new { pr = id });
+                    return data;
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            
+        }
+
+        public async Task<int> insertProspectoValidacionComplete(ProspectoValidacion prospectoValida)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "INSERT INTO public.prospecto_validacion (prospecto, estatus, fecha_validacion, estatus_kyc, fecha_empresa, resultado_kyc, observaciones, validado_por, autorizado_por, payload, id_validation, id_related, fecha_insert, fecha_update)" +
+                        "VALUES (@socio, @estatus, @fecha_validacion, @estatus_kyc, @fecha_empresa, @resultado_kyc, @observaciones, @validado_por, @autorizado_por, @payload, @id_validation, @id_related, @fecha_insert, @fecha_update)";
+                    var data = await connection.ExecuteAsync(script,
+                        new
+                        {
+                            prospecto = prospectoValida.Prospecto,
+                            estatus = prospectoValida.Estatus,
+                            fecha_validacion = prospectoValida.Fecha_Validacion,
+                            estatus_kyc = prospectoValida.Estatus_Kyc,
+                            fecha_empresa = prospectoValida.Fecha_Empresa,
+                            fecha_kyc = prospectoValida.Fecha_Kyc,
+                            resultado_kyc = prospectoValida.Resultado_Kyc,
+                            observaciones = prospectoValida.Observaciones,
+                            validado_por = prospectoValida.Validado_Por,
+                            autorizado_por = prospectoValida.Autorizado_Por,
+                            payload = prospectoValida.Payload,
+                            id_validation = prospectoValida.Id_Validation,
+                            id_related = prospectoValida.Id_Related,
+                            fecha_insert = prospectoValida.Fecha_Insert,
+                            fecha_update = prospectoValida.Fecha_Update
+                        });
+                    return data;
+                }
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
+
+
     }
 }
 
