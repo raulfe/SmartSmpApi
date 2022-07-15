@@ -95,21 +95,36 @@ namespace SmartBusinessAPI.Repositories
                 throw new BusinessException("El socio no cuenta con Id de validacion existente");
             }
 
-            //Comente esta parte porque no se si es necesario validar si esta Auroizado_por y de ser así, si me enviaran ese dato para el Update
-            //if (validacion.AutorizadoPor == null) 
-            //{
-            //    _logger.LogError("El socio no cuenta con persona que autorice el proceso");
-            //    throw new BusinessException("El socio no cuenta con persona que autorice el proceso");
-            //}
+            if (socioValidacion.Autorizado == null)
+            {
+                _logger.LogError("El socio no cuenta con persona que autorice el proceso");
+                throw new BusinessException("El socio no cuenta con persona que autorice el proceso");
+            }
+
+            var resultKyc = "";
+            switch (socioValidacion.Estatus)
+            {
+                case 1:
+                    resultKyc = "verified";
+                    break;
+                case 3:
+                    resultKyc = "rejected";
+                    break;
+                case 2:
+                    resultKyc = "reviewNeeded";
+                    break;
+            }
+
+
             var validation = new SocioValidacion()
             {
                 Socio = validacion.Socio,
                 Estatus = socioValidacion.Estatus,
                 FechaValidacion = validacion.FechaValidacion,
-                EstatusKyc = validacion.EstatusKyc,
+                EstatusKyc = socioValidacion.Estatus,
                 FechaKyc = DateTime.Now,
                 FechaEmpresa = validacion.FechaEmpresa,
-                ResultadoKyc = validacion.ResultadoKyc,
+                ResultadoKyc = resultKyc,
                 Observaciones = socioValidacion.Observaciones,
                 ValidadoPor = validacion.ValidadoPor,
                 AutorizadoPor = validacion.AutorizadoPor,

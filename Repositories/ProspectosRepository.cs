@@ -55,21 +55,34 @@ namespace SmartBusinessAPI.Repositories
                 throw new BusinessException("El socio no cuenta con Id de validacion existente");
             }
 
-            //Comente esta parte porque no se si es necesario validar si esta Auroizado_por y de ser así, si me enviaran ese dato para el Update
-            //if (validacion.AutorizadoPor == null) 
-            //{
-            //    _logger.LogError("El prospecto no cuenta con persona que autorice el proceso");
-            //    throw new BusinessException("El prospecto no cuenta con persona que autorice el proceso");
-            //}
+            if (prospectoValidacion.Autorizado == null)
+            {
+                _logger.LogError("El socio no cuenta con persona que autorice el proceso");
+                throw new BusinessException("El socio no cuenta con persona que autorice el proceso");
+            }
+
+            var resultKyc = "";
+            switch (prospectoValidacion.Estatus)
+            {
+                case 1:
+                    resultKyc = "verified";
+                    break;
+                case 3:
+                    resultKyc = "rejected";
+                    break;
+                case 2:
+                    resultKyc = "reviewNeeded";
+                    break;
+            }
             var validation = new ProspectoValidacion()
             {
                 Prospecto = validacion.Prospecto,
                 Estatus = prospectoValidacion.Estatus,
                 Fecha_Validacion = validacion.Fecha_Validacion,
-                Estatus_Kyc = validacion.Estatus_Kyc,
+                Estatus_Kyc = prospectoValidacion.Estatus,
                 Fecha_Kyc = DateTime.Now,
                 Fecha_Empresa = validacion.Fecha_Empresa,
-                Resultado_Kyc = validacion.Resultado_Kyc,
+                Resultado_Kyc = resultKyc,
                 Observaciones = prospectoValidacion.Observaciones,
                 Validado_Por = validacion.Validado_Por,
                 Autorizado_Por = validacion.Autorizado_Por,
