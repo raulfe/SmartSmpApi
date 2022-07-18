@@ -110,18 +110,38 @@ namespace SmartBusinessAPI.Repositories
                 throw new BusinessException("El socio no cuenta con Id de validacion existente");
             }
 
+            if (socioValidacion.Autorizado == null)
+            {
+                _logger.LogError("El socio no cuenta con persona que autorice el proceso");
+                throw new BusinessException("El socio no cuenta con persona que autorice el proceso");
+            }
+
+            var resultKyc = "";
+            switch (socioValidacion.Estatus)
+            {
+                case 1:
+                    resultKyc = "verified";
+                    break;
+                case 3:
+                    resultKyc = "rejected";
+                    break;
+                case 2:
+                    resultKyc = "reviewNeeded";
+                    break;
+            }
+
             var validation = new SocioValidacion()
             {
                 Socio = validacion.Socio,
                 Estatus = socioValidacion.Estatus,
                 Fecha_Validacion = validacion.Fecha_Validacion,
-                Estatus_Kyc = validacion.Estatus_Kyc,
+                Estatus_Kyc = socioValidacion.Estatus,
                 Fecha_Kyc = DateTime.Now,
                 Fecha_Empresa = validacion.Fecha_Empresa,
-                Resultado_Kyc = validacion.Resultado_Kyc,
+                Resultado_Kyc = resultKyc,
                 Observaciones = socioValidacion.Observaciones,
                 Validado_Por = validacion.Validado_Por,
-                Autorizado_Por = validacion.Autorizado_Por,
+                Autorizado_Por = socioValidacion.Autorizado,
                 Payload = new JsonParameter(JsonConvert.SerializeObject(validacion.Payload)),
                 Id_Validation = validacion.Id_Validation,
                 Id_Related = validacion.Id_Related,

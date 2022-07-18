@@ -6,8 +6,6 @@ using SmartBusinessAPI.Exceptions;
 using SmartBusinessAPI.Interfaces;
 using SmartBusinessAPI.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SmartBusinessAPI.Repositories
@@ -53,18 +51,39 @@ namespace SmartBusinessAPI.Repositories
                 _logger.LogError("El socio no cuenta con Id de validacion existente");
                 throw new BusinessException("El socio no cuenta con Id de validacion existente");
             }
+
+            if (prospectoValidacion.Autorizado == null)
+            {
+                _logger.LogError("El socio no cuenta con persona que autorice el proceso");
+                throw new BusinessException("El socio no cuenta con persona que autorice el proceso");
+            }
+
+            var resultKyc = "";
+            switch (prospectoValidacion.Estatus)
+            {
+                case 1:
+                    resultKyc = "verified";
+                    break;
+                case 3:
+                    resultKyc = "rejected";
+                    break;
+                case 2:
+                    resultKyc = "reviewNeeded";
+                    break;
+            }
+
             var validation = new ProspectoValidacion()
             {
                 Prospecto = validacion.Prospecto,
                 Estatus = prospectoValidacion.Estatus,
                 Fecha_Validacion = validacion.Fecha_Validacion,
-                Estatus_Kyc = validacion.Estatus_Kyc,
+                Estatus_Kyc = prospectoValidacion.Estatus,
                 Fecha_Kyc = DateTime.Now,
                 Fecha_Empresa = validacion.Fecha_Empresa,
-                Resultado_Kyc = validacion.Resultado_Kyc,
+                Resultado_Kyc = resultKyc,
                 Observaciones = prospectoValidacion.Observaciones,
                 Validado_Por = validacion.Validado_Por,
-                Autorizado_Por = validacion.Autorizado_Por,
+                Autorizado_Por = prospectoValidacion.Autorizado,
                 Payload = new JsonParameter(JsonConvert.SerializeObject(validacion.Payload)),
                 Id_Validation = validacion.Id_Validation,
                 Id_Related = validacion.Id_Related,
