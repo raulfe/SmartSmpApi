@@ -78,5 +78,66 @@ namespace SmartBusinessAPI.Controllers
             };
             return Ok(response);
         }
+
+        //[Authorize]
+        [HttpPost("List")]
+        public async Task<IActionResult> getSocioSearch(SocioSearch socioSearch)
+        {
+            var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            _logger.LogInformation($"Request by {address} IP");
+            var data = await _repository.getSocioSearch(socioSearch);
+            return Ok(data);
+        }
+
+        //[Authorize]
+        [HttpPost("Productos")]
+        public async Task<IActionResult> getSocioProductSearch(SocioProductSearch socioProduct)
+        {
+            var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            _logger.LogInformation($"Request by {address} IP");
+            var data = await _repository.getSocioProductSearch(socioProduct);
+            return Ok(data);
+        }
+
+        //[Authorize]
+        [HttpGet("Detail/{id}")]
+        public async Task<IActionResult> getSocioDetail(int id )
+        {
+            var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+           _logger.LogInformation($"Request by {address} IP");
+            var data = await _repository.getSocioDetail(id);
+            return Ok(data);
+        }
+
+        //[Authorize]
+        [HttpGet("Detail/History/{id}")]
+        public async Task<IActionResult> getSocioHistory(int id)
+        {
+            var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            _logger.LogInformation($"Request by {address} IP");
+            var data = await _repository.getSocioHistory(id);
+            return Ok(data);
+        }
+
+        //[Authorize]
+        [HttpPut("/Status/{id}/")]
+        public async Task<IActionResult> updateStatusSocio(int id, int status)
+        {
+            var address = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            _logger.LogInformation($"Request by {address} IP");
+            var data = await _repository.updateStatusSocio(id, status);
+            var response = new
+            {
+                Status = 200,
+                Response = $"Estatus de Socio actualizado con éxito",
+                Details = "Smart Business API",
+                Results = data
+            };
+            return Ok(response);
+        }
+
+
+
+
     }
 }

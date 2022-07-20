@@ -199,7 +199,7 @@ namespace SmartBusinessAPI.Mediator.Commands
                 {
                     var script = "UPDATE public.socios SET validacion = @validacion WHERE socio = @socio";
                     var data = await connection.ExecuteAsync(script, new {
-                        prospecto = socio,
+                        socio = socio,
                         validacion = validacion,
 
                     });
@@ -212,6 +212,110 @@ namespace SmartBusinessAPI.Mediator.Commands
                 return 0;
             }
         }
+
+
+        public async Task<IEnumerable<ResultSearchSocios>> getSocioSearch(SocioSearch socioSearch) 
+        {
+            try 
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "SELECT s.socio,s.nombre,s.email,i.tel_celular,r.nombre as Nombre_Rango FROM public.socios s left JOIN public.socio_info i ON i.socio = s.socio left JOIN public.rangos r ON r.rango = s.rango WHERE s.nombre like '%"+socioSearch.nombre+ "%' AND s.socio = '" + socioSearch.id + "'  "; 
+                    var data = await connection.QueryAsync<ResultSearchSocios>(script, new {
+                    });
+                     var dee = data.OrderByDescending(x => x.socio).Skip(socioSearch.pagina * -1).Take(100).ToList(); 
+                    return dee;
+                }
+            }
+            catch (Exception e) 
+            {
+                _logger.LogError($"Exception found: {e.Message}");
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<ResultSearchSocioProduct>> getSocioProductSearch(SocioProductSearch socioProduct)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "SELECT s.socio, s.nombre, s.email, COUNT(i.plan) AS total_planes FROM public.socios s left JOIN public.socio_productos i ON i.socio = s.socio WHERE  cast(s.socio as varchar(100)) like '%" + socioProduct.id + "%' GROUP BY(s.socio)";
+                    var data = await connection.QueryAsync<ResultSearchSocioProduct>(script, new
+                    {
+                    });
+                    var dee = data.OrderByDescending(x => x.socio).Skip(socioProduct.pagina * -1).Take(100).ToList();
+                    return dee;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Exception found: {e.Message}");
+                return null;
+            }
+          
+        }
+
+
+
+        public async Task<IEnumerable<SocioHistory>> getSocioHistory(int id)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "SELECT s.socio,i.fecha_inicio,i.estatus,i.capital_inicial,i.capital FROM public.socios s left JOIN public.socio_productos i ON i.socio = s.socio WHERE  s.socio = @socio GROUP BY (s.socio, i.capital_inicial, i.capital, i.fecha_inicio, i.estatus)";
+                    var data = await connection.QueryAsync<SocioHistory>(script, new { socio = id   });
+                    return data;
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public async Task<SocioDetail> getSocioDetail(int id)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "SELECT s.socio,s.nombre,s.rango,r.nombre as Nombre_Rango, SUM(i.capital_inicial) AS suma_capital FROM public.socios s left JOIN public.socio_productos i ON i.socio = s.socio left JOIN public.rangos r ON r.rango = s.rango WHERE  s.socio = @socio GROUP BY (s.socio, r.nombre) ";
+                    var data = await connection.QueryFirstAsync<SocioDetail>(script, new { socio = id });
+                    return data;
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public async Task<int> updateStatusSocio(int id, int status)
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("Default")))
+                {
+                    var script = "UPDATE public.socios SET estatus = @estatus WHERE socio = @socio";
+                    var data = await connection.ExecuteAsync(script, new
+                    {
+                        socio = id,
+                        estatus = status,
+                    });
+                    return data;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Exception found: {e.Message}");
+                return 0;
+            }
+        }
+
+
+
 
     }
 }

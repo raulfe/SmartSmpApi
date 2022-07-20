@@ -19,5 +19,10 @@ namespace SmartBusinessAPI.Interfaces
         Task<SocioValidacionR> getLastValidacionById(int id);
         Task<SocioValidacionR> getSocioValidacionbyValidacion(int validacionId);
         Task<int> insertSocioValidacion(SocioValidacion socioValida);
+        Task<IEnumerable<ResultSearchSocios>> getSocioSearch(SocioSearch socioSearch);
+        Task<IEnumerable<ResultSearchSocioProduct>> getSocioProductSearch(SocioProductSearch socioProduct);
+        Task<int> updateStatusSocio(int id, int status);
+        Task<IEnumerable<SocioHistory>> getSocioHistory(int id);
+        Task<SocioDetail> getSocioDetail(int id);
     }
 }

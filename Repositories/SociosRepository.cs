@@ -33,9 +33,9 @@ namespace SmartBusinessAPI.Repositories
             catch (Exception e)
             {
 
-                throw new BusinessException($"Exception found: {e.Message}"); 
+                throw new BusinessException($"Exception found: {e.Message}");
             }
-            
+
         }
 
         public async Task<SociosR> getSocioByPosition(int id)
@@ -66,30 +66,30 @@ namespace SmartBusinessAPI.Repositories
             }
         }
 
-        public async Task<Socios_documentacion> getDocumentById(int id) 
+        public async Task<Socios_documentacion> getDocumentById(int id)
         {
-            try 
+            try
             {
                 var data = await _socios.getDocumentById(id);
                 return data;
             }
-            catch ( Exception e) 
+            catch (Exception e)
             {
                 throw new BusinessException($"Exception found: {e.Message}");
             }
         }
 
-        public async Task<bool> updateSocioValidacion(Validacionupdate socioValidacion) 
+        public async Task<bool> updateSocioValidacion(Validacionupdate socioValidacion)
         {
             var socio = await _socios.getSocioById(socioValidacion.Id);
-            if ( socio == null)
+            if (socio == null)
             {
                 _logger.LogError("El socio buscado no existe");
                 throw new BusinessException("El socio buscado no existe");
             }
 
             var validacion = await _socios.getSocioValidacionbyValidacion(socio.Validacion);
-            if (validacion == null) 
+            if (validacion == null)
             {
                 _logger.LogError("El socio no cuenta con Id de validacion existente");
                 throw new BusinessException("El socio no cuenta con Id de validacion existente");
@@ -140,17 +140,83 @@ namespace SmartBusinessAPI.Repositories
                 throw new BusinessException("Lo sentimos hubo un problema al registrar esta nueva validacion");
             }
             var lastValidacion = await _socios.getLastValidacionById(validacion.Socio);
-            if ( lastValidacion == null)
+            if (lastValidacion == null)
             {
                 _logger.LogError("No pudimos encontrar la ultima validacion del socio");
                 throw new BusinessException("No pudimos encontrar la ultima validacion del socio");
 
             }
             var resUpdate = await _socios.updateSocioIdValidacion(lastValidacion.Validacion, lastValidacion.Socio);
-            if (resUpdate == 0 ) 
+            if (resUpdate == 0)
             {
                 _logger.LogError("La Validacion del Socio no pudo ser actualizada");
                 throw new BusinessException("La Validacion del Socio no pudo ser actualizada");
+            }
+            return true;
+        }
+
+
+
+
+        public async Task<IEnumerable<ResultSearchSocios>> getSocioSearch(SocioSearch socioSearch)
+        {
+            try
+            {
+                var data = await _socios.getSocioSearch(socioSearch);
+                return data;
+            }
+            catch (Exception e)
+            {
+                throw new BusinessException($"Exception found: {e.Message}");
+            }
+        }
+
+        public async Task<IEnumerable<ResultSearchSocioProduct>> getSocioProductSearch(SocioProductSearch socioProduct)
+        {
+            try
+            {
+                var data = await _socios.getSocioProductSearch(socioProduct);
+                return data;
+            }
+            catch (Exception e)
+            {
+                throw new BusinessException($"Exception found: {e.Message}");
+            }
+        }
+
+
+        public async Task<IEnumerable<SocioHistory>> getSocioHistory(int id)
+        {
+            try
+            {
+                var data = await _socios.getSocioHistory(id);
+                return data;
+            }
+            catch (Exception e)
+            {
+                throw new BusinessException($"Exception found: {e.Message}");
+            }
+        }
+        public async Task<SocioDetail> getSocioDetail(int id)
+        {
+            try
+            {
+                var data = await _socios.getSocioDetail(id);
+                return data;
+            }
+            catch (Exception e)
+            {
+                throw new BusinessException($"Exception found: {e.Message}");
+            }
+        }
+
+        public async Task<bool> updateStatusSocio(int id, int status)
+        {
+            var resUpdate = await _socios.updateStatusSocio(id, status);
+            if (resUpdate == 0)
+            {
+                _logger.LogError("El estatus del Socio no pudo ser actualizado");
+                throw new BusinessException("El estatus del Socio no pudo ser actualizado");
             }
             return true;
         }
